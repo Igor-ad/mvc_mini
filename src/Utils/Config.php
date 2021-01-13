@@ -11,7 +11,7 @@ class Config
 {
     const CONFIG_FILE = __DIR__ . '/../../.env';
 
-    public static function get($key): string
+    public static function get(string $key): string
     {
         $data = (file_get_contents(self::CONFIG_FILE))
             ? file_get_contents(self::CONFIG_FILE)
@@ -21,11 +21,10 @@ class Config
         foreach ($array as $item) {
             $keyStr = strstr($item, ': ', true);
             if ($keyStr == $key) {
-                $param = trim(strstr($item, ' '));
+                return trim(strstr($item, ' '));
             } else {
                 continue;
             }
         }
-        return $param;
     }
 }
