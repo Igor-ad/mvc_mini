@@ -39,8 +39,8 @@
                     <div class="form-group">
                         <label>Status</label>
                         <select  class="form-control" name="status">
-                            <option><?= isset($user['status']) ? $user['status'] : '' ;?></option>
-                            <option><?= isset($user['status']) ? (int)!($user['status']) : '' ;?></option>
+                            <option><?= isset($user['status']) ? $user['status'] : 1 ;?></option>
+                            <option><?= isset($user['status']) ? (int)!($user['status']) : 0 ;?></option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
