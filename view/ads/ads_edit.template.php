@@ -34,8 +34,8 @@
                 <div class="form-group">
                     <label>Status</label>
                     <select class="form-control" name="status">
-                        <option><?= isset($ads['status']) ? $ads['status'] : '' ;?></option>
-                        <option><?= isset($ads['status']) ? (int)!($ads['status']) : '' ;?></option>
+                        <option><?= isset($ads['status']) ? $ads['status'] : 1 ;?></option>
+                        <option><?= isset($ads['status']) ? (int)!($ads['status']) : 0 ;?></option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
