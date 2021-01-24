@@ -8,10 +8,16 @@ use App\Exception\ValidationException;
 class UserController
 {
     public const TABLE = 'users';
+    private User $userModel;
 
-    public function index()
+    public function __construct()
     {
-        $users = User::findAll(self::TABLE);
+        $this->userModel = new User(self::TABLE);
+    }
+
+    public function index(): string
+    {
+        $users = $this->userModel->findAll();
 
         $data = [
             'title' => 'Users',
@@ -41,20 +47,14 @@ class UserController
             throw new ValidationException($errors);
         }
 
-        $user = new User(
-            $data['name'],
-            $data['email'],
-            $data['password']
-        );
-
-        $checkUserExist = User::findByEmail($user->getEmail());
+        $checkUserExist = $this->userModel->findBy(['email' => $data['email']]);
         if ($checkUserExist) {
             throw new ValidationException([
                 'email' => 'Email already exist'
             ]);
         }
 
-        User::save($user);
+        $this->userModel->save($data);
 
         header('Location: /user');
         exit;
@@ -64,18 +64,13 @@ class UserController
     {
         if (isset($_GET['id'])) {
             $id = (int) $_GET['id'];
-            User::remove(self::TABLE, $id);
+            $this->userModel->remove($id);
         }
         header('Location: /user');
         exit;
     }
 
-    /**
-     * @return string
-     * @throws ValidationException
-     * @throws \Exception
-     */
-    public function edit()
+    public function edit(): string
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $id = (int) $_GET['id'];
@@ -91,9 +86,11 @@ class UserController
         if ($errors) {
             $data['act'] = 'Please, check all items of form again';
             $data['error'] = $errors;
+
             return view('user.user_edit', $data);
         }
-        User::update($dataPost);
+
+        $this->userModel->update($dataPost);
 
         header('Location: /user');
         exit;
@@ -101,7 +98,7 @@ class UserController
 
     public function getUserParams($id): array
     {
-        $user = User::findById(self::TABLE, $id);
+        $user = $this->userModel->findById($id);
         if (!$user) {
             header('Location: /user');
             exit;
@@ -127,6 +124,13 @@ class UserController
 
         if (empty($data['password'])) {
             $errors['password'] = 'Cannot be empty';
+        }
+
+        if ($data['email'] != $this->userModel->findById($data['id'])['email']) {
+            $search = $this->userModel->findBy(['email' => $data['email']]);
+            if ($search['email'] == $data['email']) {
+                $errors['email'] = 'Email : ' . $data['email'] . ' is already exist. Please change email address.';
+            }
         }
         return !empty($errors) ? $errors : [];
     }
