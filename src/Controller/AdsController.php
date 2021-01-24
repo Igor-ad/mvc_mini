@@ -9,10 +9,16 @@ use App\Model\Ads;
 class AdsController
 {
     public const TABLE = 'ads';
+    private Ads $adsModel;
 
-    public function index()
+    public function __construct()
     {
-        $ads = Ads::findAll(self::TABLE);
+        $this->adsModel = new Ads(self::TABLE);
+    }
+
+    public function index(): string
+    {
+        $ads = $this->adsModel->findAll();
 
         $data = [
             'title' => 'Ads list',
@@ -26,7 +32,7 @@ class AdsController
      * @throws ValidationException
      * @throws \App\Exception\InvalidStringLength
      */
-    public function create()
+    public function create(): string
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $data = [
@@ -41,9 +47,7 @@ class AdsController
         if ($errors) {
             throw new ValidationException($errors);
         }
-
-        $ads = new Ads($data['title'], $data['body']);
-        Ads::save($ads);
+        $this->adsModel->save($data);
 
         header('Location: /ads');
         exit;
@@ -53,18 +57,13 @@ class AdsController
     {
         if (isset($_GET['id'])) {
             $id = (int) $_GET['id'];
-            Ads::remove(self::TABLE, $id);
+            $this->adsModel->remove($id);
         }
         header('Location: /ads');
         exit;
     }
 
-    /**
-     * @return string
-     * @throws ValidationException
-     * @throws \Exception
-     */
-    public function edit()
+    public function edit(): string
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $id = (int) $_GET['id'];
@@ -82,7 +81,7 @@ class AdsController
             $data['error'] = $errors;
             return view('ads.ads_edit', $data);
         }
-        Ads::update($dataPost);
+        $this->adsModel->update($dataPost);
 
         header('Location: /ads');
         exit;
@@ -90,7 +89,7 @@ class AdsController
 
     public function getAdsParams($id): array
     {
-        $ads = Ads::findById(self::TABLE, $id);
+        $ads = $this->adsModel->findById($id);
         if (!$ads) {
             header('Location: /ads');
             exit;
@@ -106,14 +105,14 @@ class AdsController
         $errors = [];
         if (empty($data['title'])) {
             $errors['title'] = 'Cannot be empty';
-        } elseif (strlen($data['title']) > Ads::LENGTH_TITLE_MAX) {
-            $errors['title'] = 'Length of title can`t be more than ' . Ads::LENGTH_TITLE_MAX . ' chars.';
+        } elseif (strlen($data['title']) > $this->adsModel::LENGTH_TITLE_MAX) {
+            $errors['title'] = 'Length of title can`t be more than ' . $this->adsModel::LENGTH_TITLE_MAX . ' chars.';
         }
 
         if (empty($data['body'])) {
             $errors['body'] = 'Cannot be empty';
-        } elseif (strlen($data['body']) > Ads::LENGTH_BODY_MAX) {
-            $errors['body'] = 'Length of body can`t be more than ' . Ads::LENGTH_BODY_MAX . ' chars.';
+        } elseif (strlen($data['body']) > $this->adsModel::LENGTH_BODY_MAX) {
+            $errors['body'] = 'Length of body can`t be more than ' . $this->adsModel::LENGTH_BODY_MAX . ' chars.';
         }
         return !empty($errors) ? $errors : [];
     }
