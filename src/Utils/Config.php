@@ -13,15 +13,14 @@ class Config
 
     public static function get(string $key): string
     {
-        $data = (file_get_contents(self::CONFIG_FILE))
-            ? file_get_contents(self::CONFIG_FILE)
-            : '';
+        $array = (file_exists(self::CONFIG_FILE))
+            ? file(self::CONFIG_FILE, FILE_IGNORE_NEW_LINES)
+            : [];
 
-        $array = explode("\n", $data);
         foreach ($array as $item) {
-            $keyStr = strstr($item, ': ', true);
-            if ($keyStr == $key) {
-                return trim(strstr($item, ' '));
+            $strArr = explode(':', $item);
+            if ($strArr[0] == $key) {
+                return trim($strArr[1]);
             } else {
                 continue;
             }
