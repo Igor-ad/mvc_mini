@@ -5,6 +5,8 @@ namespace App\Controller;
 
 use App\Exception\ValidationException;
 use App\Model\Ads;
+use App\Utils\Router;
+use Valitron\Validator;
 
 class AdsController
 {
@@ -41,13 +43,13 @@ class AdsController
             return view('ads.ads_create', $data);
         }
 
-        $data = $_POST;
-        $errors = $this->validate($data);
+        $dataPost = $_POST;
+        $errors = $this->validate($dataPost);
 
         if ($errors) {
             throw new ValidationException($errors);
         }
-        $this->adsModel->save($data);
+        $this->adsModel->save($dataPost);
 
         header('Location: /ads');
         exit;
@@ -79,6 +81,8 @@ class AdsController
         if ($errors) {
             $data['act'] = 'Please, check all items of form again';
             $data['error'] = $errors;
+            $logs = new Router();
+            $logs->writeLog($errors, __CLASS__);
             return view('ads.ads_edit', $data);
         }
         $this->adsModel->update($dataPost);
@@ -100,20 +104,15 @@ class AdsController
         ];
     }
 
-    public function validate($data):array
+    public function validate($data): array
     {
-        $errors = [];
-        if (empty($data['title'])) {
-            $errors['title'] = 'Cannot be empty';
-        } elseif (strlen($data['title']) > $this->adsModel::LENGTH_TITLE_MAX) {
-            $errors['title'] = 'Length of title can`t be more than ' . $this->adsModel::LENGTH_TITLE_MAX . ' chars.';
+        $v = new Validator($data);
+        $v->rule('required', ['title', 'body']);
+        $v->rule('lengthMax', 'title', $this->adsModel::LENGTH_TITLE_MAX);
+        if(!$v->validate()) {
+            return $v->errors();
+        } else {
+            return [];
         }
-
-        if (empty($data['body'])) {
-            $errors['body'] = 'Cannot be empty';
-        } elseif (strlen($data['body']) > $this->adsModel::LENGTH_BODY_MAX) {
-            $errors['body'] = 'Length of body can`t be more than ' . $this->adsModel::LENGTH_BODY_MAX . ' chars.';
-        }
-        return !empty($errors) ? $errors : [];
     }
 }
