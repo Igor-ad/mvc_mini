@@ -21,12 +21,12 @@
                     <div class="form-group">
                         <label>Ads title</label>
                         <input type="text" class="form-control" name="title" value="<?= isset($_SESSION['data']['title']) ? $_SESSION['data']['title'] : '' ;?>">
-                        <span style="color:red;font-size: 14px;"><?= error('title'); ?></span>
+                        <span style="color:red;font-size: 14px;"><?= isset($_SESSION['errors']['title']) ? implode(' ', $_SESSION['errors']['title']) : '' ;?></span>
                     </div>
                     <div class="form-group">
                         <label>Ads body</label>
                         <textarea  class="form-control" name="body" rows="8" value="<?= isset($_SESSION['data']['body']) ? $_SESSION['data']['body'] : '' ;?>"></textarea>
-                        <span style="color:red;font-size: 14px;"><?= error('body'); ?></span>
+                        <span style="color:red;font-size: 14px;"><?= isset($_SESSION['errors']['body']) ? implode(' ', $_SESSION['errors']['body']) : ''; ?></span>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
