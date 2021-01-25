@@ -4,9 +4,24 @@ namespace App\Utils;
 
 use App\Exception\Exception404;
 use App\Exception\ValidationException;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 class Router
 {
+    const LOG_FILE = __DIR__ . '/../logs/exception.log';
+
+    public function writeLog($errorMessage, $class = __CLASS__)
+    {
+        $log = new Logger($class);
+        $log->pushHandler(new StreamHandler(self::LOG_FILE, Logger::WARNING));
+        $str = '';
+        foreach ($errorMessage as $key => $item) {
+            $str .= ' ' . $key . ' - ' . implode(' and ', $item) . ' |';
+        }
+        $log->error($str);
+    }
+
     public function process()
     {
         try {
@@ -17,11 +32,12 @@ class Router
             $object->$method();
             unset($_SESSION['errors']);
         } catch (Exception404 $exception) {
+            $this->writeLog(['page' => ['404']]);
             return view('404');
         } catch (ValidationException $exception) {
             $this->handleValidationException($exception);
         } catch (\Exception $exception) {
-            //
+            $this->writeLog($exception);
         }
     }
 
@@ -65,6 +81,7 @@ class Router
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['errors'] = $exception->getErrors();
+            $this->writeLog($exception->getErrors());
             $_SESSION['data'] = $_POST;
         } else {
 
