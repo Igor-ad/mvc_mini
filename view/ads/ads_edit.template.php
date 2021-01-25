@@ -24,12 +24,12 @@
                 <div class="form-group">
                     <label>Title</label>
                     <input type="text" class="form-control" name="title" value="<?= ($ads['title']) ? : '' ;?>">
-                    <span style="color:red;font-size: 14px;"><?= isset($error['title']) ? $error['title'] : '' ;?></span>
+                    <span style="color:red;font-size: 14px;"><?= isset($error['title']) ? implode(' ', $error['title']) : '' ;?></span>
                 </div>
                 <div class="form-group">
                     <label>Ads body</label>
                     <input type="text" class="form-control" name="body" value="<?= ($ads['body']) ? : '' ;?>">
-                    <span style="color:red;font-size: 14px;"><?= isset($error['body']) ? $error['body'] : '' ;?></span>
+                    <span style="color:red;font-size: 14px;"><?= isset($error['body']) ? implode(' ', $error['body']) : '' ;?></span>
                 </div>
                 <div class="form-group">
                     <label>Status</label>
