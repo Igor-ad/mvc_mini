@@ -24,17 +24,17 @@
                     <div class="form-group">
                         <label>Name</label>
                         <input type="text" class="form-control" name="name" value="<?= ($user['name']) ? : '' ;?>">
-                        <span style="color:red;font-size: 14px;"><?= isset($error['name']) ? $error['name'] : '' ;?></span>
+                        <span style="color:red;font-size: 14px;"><?= isset($error['name']) ? implode(' ', $error['name']) : '' ;?></span>
                     </div>
                     <div class="form-group">
                         <label>Email address</label>
                         <input type="text" class="form-control" name="email" value="<?= ($user['email']) ? : '' ;?>">
-                        <span style="color:red;font-size: 14px;"><?= isset($error['email']) ? $error['email'] : '' ;?></span>
+                        <span style="color:red;font-size: 14px;"><?= isset($error['email']) ? implode(' ', $error['email']) : '' ;?></span>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
                         <input type="password" class="form-control" name="password" value="">
-                        <span style="color:red;font-size: 14px;"><?= isset($error['password']) ? $error['password'] : '' ;?></span>
+                        <span style="color:red;font-size: 14px;"><?= isset($error['password']) ? implode(' ', $error['password']) : '' ;?></span>
                     </div>
                     <div class="form-group">
                         <label>Status</label>
