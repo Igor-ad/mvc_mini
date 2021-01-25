@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Model\User;
 use App\Exception\ValidationException;
+use App\Utils\Router;
+use Valitron\Validator;
 
 class UserController
 {
@@ -46,14 +48,6 @@ class UserController
         if ($errors) {
             throw new ValidationException($errors);
         }
-
-        $checkUserExist = $this->userModel->findBy(['email' => $data['email']]);
-        if ($checkUserExist) {
-            throw new ValidationException([
-                'email' => 'Email already exist'
-            ]);
-        }
-
         $this->userModel->save($data);
 
         header('Location: /user');
@@ -86,7 +80,8 @@ class UserController
         if ($errors) {
             $data['act'] = 'Please, check all items of form again';
             $data['error'] = $errors;
-
+            $logs = new Router();
+            $logs->writeLog($errors, __CLASS__);
             return view('user.user_edit', $data);
         }
 
@@ -111,27 +106,22 @@ class UserController
 
     public function validate($data): array
     {
-        $errors = [];
-        if (empty($data['name'])) {
-            $errors['name'] = 'Cannot be empty';
-        }
-
-        if (empty($data['email'])) {
-            $errors['email'] = 'Cannot be empty';
-        } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Invalid format';
-        }
-
-        if (empty($data['password'])) {
-            $errors['password'] = 'Cannot be empty';
-        }
-
-        if ($data['email'] != $this->userModel->findById($data['id'])['email']) {
-            $search = $this->userModel->findBy(['email' => $data['email']]);
-            if ($search['email'] == $data['email']) {
-                $errors['email'] = 'Email : ' . $data['email'] . ' is already exist. Please change email address.';
+        $v = new Validator($data);
+        $v->rule('required', ['name', 'email', 'password']);
+        $v->rule('email', 'email');
+        if (!empty($data['email'])) {
+            $search = ($this->userModel->findBy(['email' => $data['email']]))
+                ? $this->userModel->findBy(['email' => $data['email']]) : [];
+            if (!empty($data['id'] && !empty($search))) {
+                $v->rule('different', 'email', $search['email']);
+            } elseif (!empty($search)) {
+                $v->rule('different', 'email', $search['email']);
             }
         }
-        return !empty($errors) ? $errors : [];
+        if(!$v->validate()) {
+            return $v->errors();
+        } else {
+            return [];
+        }
     }
 }
