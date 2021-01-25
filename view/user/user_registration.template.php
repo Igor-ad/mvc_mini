@@ -20,18 +20,18 @@
                     </div>
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" name="name" value="<?= isset($_SESSION['data']['name']) ? $_SESSION['data']['name'] : '' ;?>">
-                        <span style="color:red;font-size: 14px;"><?= error('name'); ?></span>
+                        <input type="text" class="form-control" name="name" value="<?= isset($_SESSION['data']['name']) ? $_SESSION['data']['name'] : '';?>">
+                        <span style="color:red;font-size: 14px;"><?= isset($_SESSION['errors']['name']) ? implode(' ', $_SESSION['errors']['name']) : ''; ?></span>
                     </div>
                     <div class="form-group">
                         <label>Email address</label>
-                        <input type="text" class="form-control" name="email" value="<?= isset($_SESSION['data']['email']) ? $_SESSION['data']['email'] : '' ;?>">
-                        <span style="color:red;font-size: 14px;"><?= error('email'); ?></span>
+                        <input type="text" class="form-control" name="email" value="<?= isset($_SESSION['data']['email']) ?  $_SESSION['data']['email'] : ''; ?>">
+                        <span style="color:red;font-size: 14px;"><?= isset($_SESSION['errors']['email']) ? implode(' ', $_SESSION['errors']['email']) : '';?></span>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" class="form-control" name="password" value="<?= isset($_SESSION['data']['password']) ? $_SESSION['data']['password'] : '' ;?>">
-                        <span style="color:red;font-size: 14px;"><?= error('password'); ?></span>
+                        <input type="password" class="form-control" name="password" value="<?= isset($_SESSION['data']['password']) ? $_SESSION['data']['password'] : ''; ?>">
+                        <span style="color:red;font-size: 14px;"><?= isset($_SESSION['errors']['password']) ? implode(' ', $_SESSION['errors']['password']) : ''; ?></span>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
