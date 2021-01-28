@@ -112,9 +112,10 @@ class UserController
         if (!empty($data['email'])) {
             $search = ($this->userModel->findBy(['email' => $data['email']]))
                 ? $this->userModel->findBy(['email' => $data['email']]) : [];
-            if (!empty($data['id'] && !empty($search))) {
+            if (!empty($data['id']) && (!empty($search)) && ($data['id'] != $search['id'])) {
                 $v->rule('different', 'email', $search['email']);
-            } elseif (!empty($search)) {
+            }
+            if (empty($data['id']) && !empty($search)) {
                 $v->rule('different', 'email', $search['email']);
             }
         }
