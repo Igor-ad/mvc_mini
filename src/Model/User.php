@@ -5,8 +5,8 @@ namespace App\Model;
 
 class User extends Model
 {
-//    public const STATUS_ACTIVE = 1;
-//    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
 
     public function save($data): void
     {
@@ -20,7 +20,7 @@ class User extends Model
             $data['name'],
             $data['email'],
             $data['password'],
-            1
+            self::STATUS_ACTIVE
         ]);
     }
 
