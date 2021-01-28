@@ -42,13 +42,13 @@ class UserController
             return view('user.user_registration', $data);
         }
 
-        $data = $_POST;
-        $errors = $this->validate($data);
+        $dataPost = $_POST;
+        $errors = (empty($this->validate($dataPost)))
+            ? $this->userModel->save($dataPost) : $this->validate($dataPost);
 
         if ($errors) {
             throw new ValidationException($errors);
         }
-        $this->userModel->save($data);
 
         header('Location: /user');
         exit;
@@ -76,7 +76,9 @@ class UserController
         $dataPost = $_POST;
         $data = $this->getUserParams($dataPost['id']);
 
-        $errors = $this->validate($dataPost);
+        $errors = (empty($this->validate($dataPost)))
+            ? $this->userModel->update($dataPost) : $this->validate($dataPost);
+
         if ($errors) {
             $data['act'] = 'Please, check all items of form again';
             $data['error'] = $errors;
@@ -84,8 +86,6 @@ class UserController
             $logs->writeLog($errors, __CLASS__);
             return view('user.user_edit', $data);
         }
-
-        $this->userModel->update($dataPost);
 
         header('Location: /user');
         exit;
@@ -109,16 +109,6 @@ class UserController
         $v = new Validator($data);
         $v->rule('required', ['name', 'email', 'password']);
         $v->rule('email', 'email');
-        if (!empty($data['email'])) {
-            $search = ($this->userModel->findBy(['email' => $data['email']]))
-                ? $this->userModel->findBy(['email' => $data['email']]) : [];
-            if (!empty($data['id']) && (!empty($search)) && ($data['id'] != $search['id'])) {
-                $v->rule('different', 'email', $search['email']);
-            }
-            if (empty($data['id']) && !empty($search)) {
-                $v->rule('different', 'email', $search['email']);
-            }
-        }
         if(!$v->validate()) {
             return $v->errors();
         } else {
