@@ -109,6 +109,7 @@ class AdsController
         $v = new Validator($data);
         $v->rule('required', ['title', 'body']);
         $v->rule('lengthMax', 'title', $this->adsModel::LENGTH_TITLE_MAX);
+        $v->rule('lengthMax', 'body', $this->adsModel::LENGTH_BODY_MAX);
         if(!$v->validate()) {
             return $v->errors();
         } else {
