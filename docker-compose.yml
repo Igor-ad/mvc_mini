@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  web:
+    image: nginx:1.19.6
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./:/var/www/project
+  php:
+    build: ./docker/php
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./:/var/www/project
+
+  mysql:
+    image: mysql:8.0.23
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    env_file:
+      - .env
+volumes:
+  mysql_data:
