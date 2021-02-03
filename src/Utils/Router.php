@@ -11,7 +11,7 @@ class Router
 {
     const LOG_FILE = __DIR__ . '/../logs/exception.log';
 
-    public function writeLog($errorMessage, $class = __CLASS__)
+    protected function writeLog($errorMessage, $class = __CLASS__)
     {
         $log = new Logger($class);
         $log->pushHandler(new StreamHandler(self::LOG_FILE, Logger::WARNING));
@@ -38,6 +38,7 @@ class Router
             $this->handleValidationException($exception);
         } catch (\Exception $exception) {
             $this->writeLog($exception);
+            return view('wrong');
         }
     }
 
@@ -81,7 +82,6 @@ class Router
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['errors'] = $exception->getErrors();
-            $this->writeLog($exception->getErrors());
             $_SESSION['data'] = $_POST;
         } else {
 
