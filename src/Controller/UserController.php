@@ -82,8 +82,6 @@ class UserController
         if ($errors) {
             $data['act'] = 'Please, check all items of form again';
             $data['error'] = $errors;
-            $logs = new Router();
-            $logs->writeLog($errors, __CLASS__);
             return view('user.user_edit', $data);
         }
 
