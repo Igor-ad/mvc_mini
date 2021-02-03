@@ -81,8 +81,6 @@ class AdsController
         if ($errors) {
             $data['act'] = 'Please, check all items of form again';
             $data['error'] = $errors;
-            $logs = new Router();
-            $logs->writeLog($errors, __CLASS__);
             return view('ads.ads_edit', $data);
         }
         $this->adsModel->update($dataPost);
